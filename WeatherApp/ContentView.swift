@@ -8,14 +8,34 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var isLoading = false
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        ZStack {
+            Color.appBackground.ignoresSafeArea()
+            VStack(spacing:30) {
+                Image(systemName: "globe")
+                    .imageScale(.large)
+                    .foregroundStyle(.mainTint)
+                Text("Hello, world!")
+                    .fontNunito(.medium, size: 30)
+                Text("Hello, world!")
+                    .fontNunito(.light, size: 30)
+                Text("Hello, world!")
+                    .fontNunito(.regular, size: 30)
+                Text("Hello, world!")
+                    .fontNunito(.semibold, size: 30)
+                    .foregroundStyle(.font)
+
+
+            }
+            .padding()
+            .background(Color.appBackgroundSecond)
+            .onTapGesture {
+                isLoading.toggle()
+            }
+            .coverFullScreen()
+            .modifier(LoaderView(isLoading: $isLoading))
         }
-        .padding()
     }
 }
 

@@ -6,10 +6,34 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct WeatherInfoView: View {
+    @Environment(\.dismiss) var dismiss
+    var coordinates:CLLocationCoordinate2D = .init()
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            Text("Hello, World! \(coordinates.latitude), \(coordinates.longitude) ")
+                .navigationTitle("Weather")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(role: .cancel) {
+                            dismiss()
+                        } label: {
+                            Text("Cancel")
+                        }
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(role: .cancel) {
+                            
+                        } label: {
+                            Text("Add")
+                        }
+                    }
+                }
+        }
     }
 }
 

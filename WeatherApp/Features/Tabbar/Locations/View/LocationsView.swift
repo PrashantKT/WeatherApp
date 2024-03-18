@@ -8,10 +8,68 @@
 import SwiftUI
 
 struct LocationsView: View {
+    @StateObject private var locationViewModel = MyLocationsViewModel()
+    @FocusState var searchFocus:Bool
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            SearchBar(searchText: $locationViewModel.locationSearch,focusState: $searchFocus)
+                .padding()
+            
+            if locationViewModel.isSearching || searchFocus {
+                LocationSearchListView(focusState: $searchFocus)
+                    .background(.clear)
+                    .environmentObject(locationViewModel)
+            } else {
+                if !locationViewModel.locations.isEmpty {
+                    
+                    List {
+                        ForEach(locationViewModel.locations,id: \.self) {location in
+                            HStack {
+                                Text(location.locationName)
+                                Image(systemName: location.iconName)
+                                    
+                            }
+                            .fontNunito(.semibold, size: 15)
+                        }
+                    }
+                    
+                } else {
+                    contentUnAvailableViewForList
+                }
+            }
+            
+            Spacer()
+            
+        }
+        .coverFullScreen()
+        .background(.appBackground)
+        .showErrorAlert(error: $locationViewModel.showError)
+        
+      
+
     }
+    
+    @ViewBuilder
+     var contentUnAvailableViewForList : some View {
+         ContentUnavailableView(label: {
+            Label(
+                title: { Text("Add your locations").fontNunito(.regular, size: 22) },
+                icon: { Image(systemName: "mappin").foregroundStyle(.primary) }
+            )
+        }, description: {
+            Text("Use the searchbar to find and then add the location you need")
+                .padding(.top,8)
+                .fontNunito(.light, size: 16)
+        })
+    }
+    
+  
+    
+
+    
 }
+
 
 #Preview {
     LocationsView()

@@ -7,7 +7,20 @@
 
 import SwiftUI
 
-extension Color {
+extension View {
     
+    func coverFullScreen(alignment:Alignment = .center) -> some View  {
+        self
+            .frame(maxWidth: .infinity, maxHeight: .infinity,alignment: alignment)
+    }
     
+    func coverH(alignment:Alignment = .center) -> some View  {
+        self
+            .frame(maxWidth: .infinity,alignment: alignment)
+    }
+    
+    func coverV(alignment:Alignment = .center) -> some View  {
+        self
+            .frame(maxHeight:.infinity,alignment: alignment)
+    }
 }

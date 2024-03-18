@@ -6,3 +6,17 @@
 //
 
 import Foundation
+
+
+class MainScreenViewModel:ObservableObject {
+
+    enum Tab {
+        case myLocation
+        case weather
+        case settings
+    }
+    
+    @Published var currentTab:Tab = .myLocation
+    
+}
+

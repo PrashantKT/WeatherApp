@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+enum Constants {
+    static let baseUrl = "https"
+    static let apiToken = ""
+    
+}
