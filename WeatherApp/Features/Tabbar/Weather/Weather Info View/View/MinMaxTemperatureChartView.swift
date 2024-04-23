@@ -80,5 +80,5 @@ struct MinMaxTemperatureChartView : View {
 }
 
 #Preview {
-    WeatherMinMaxChartView()
+    MinMaxTemperatureChartView(maxWeeklyTemp: 50, minWeeklyTemp: 30)
 }

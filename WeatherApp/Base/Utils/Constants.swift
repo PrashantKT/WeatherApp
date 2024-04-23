@@ -12,3 +12,9 @@ enum Constants {
     static let apiToken = ""
     
 }
+
+enum FontSize {
+    static let smallFontSize:CGFloat = 12
+    static let mediumFontSize:CGFloat = 16
+    static let largeFontSize:CGFloat = 22
+}

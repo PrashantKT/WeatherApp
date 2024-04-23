@@ -36,3 +36,9 @@ extension View {
         
     }
 }
+
+extension CGFloat {
+    static let smallFontSize:CGFloat = 12
+    static let mediumFontSize:CGFloat = 16
+    static let largeFontSize:CGFloat = 22
+}

@@ -6,3 +6,16 @@
 //
 
 import Foundation
+
+extension DateForecastView {
+    
+    class ViewModel:ObservableObject {
+        
+        init() {
+        }
+        
+        @Published var dates = [Date]()
+        
+    }
+    
+}

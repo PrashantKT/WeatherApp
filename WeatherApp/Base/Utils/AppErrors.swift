@@ -27,9 +27,17 @@ enum AppError :LocalizedError {
     }
 }
 
-struct ErrorAlert : ViewModifier {
+
+
+struct ErrorAlert<T:View> : ViewModifier  {
     
     @Binding var error : AppError?
+    var actions:((AppError?) -> T)
+    init(error: Binding<AppError?>,  @ViewBuilder action: @escaping ((AppError?) -> T)  = { _ in EmptyView()} ) {
+        _error = error
+        actions = action
+    }
+    
     var isShowingError:Binding<Bool> {
         Binding {
             error != nil
@@ -39,10 +47,11 @@ struct ErrorAlert : ViewModifier {
 
     }
     
+    @ViewBuilder
     func body(content: Content) -> some View {
         content
             .alert(isPresented: isShowingError, error: error) { error in
-                
+                actions(error)
             } message: { error in
                 if let error = error.errorMessage {
                     Text(error)
@@ -55,7 +64,9 @@ struct ErrorAlert : ViewModifier {
 
 
 extension View {
-    func showErrorAlert(error:Binding<AppError?>) -> some View {
-        self.modifier(ErrorAlert(error: error))
+    func showErrorAlert(error:Binding<AppError?>,@ViewBuilder actions: @escaping ((AppError?) -> some View) = { _ in EmptyView() } ) -> some View {
+        self.modifier(ErrorAlert(error: error,action: actions))
+        
     }
+    
 }

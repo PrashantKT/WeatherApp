@@ -38,19 +38,7 @@ struct LocationSearchListView: View {
         }
     }
     
-    private func showContentUnavailableView(titel:String,iconName:String,desc:String,@ViewBuilder action: () -> some View = { EmptyView() }) -> some View {
-        ContentUnavailableView(label: {
-            Label(
-                title: { Text(titel).fontNunito(.regular, size: 22) },
-                icon: { Image(systemName: iconName).foregroundStyle(.primary) }
-            )
-        }, description: {
-            Text(desc)
-                .padding(.top,8)
-                .fontNunito(.light, size: 16)
-        }, actions: action)
-    }
-    
+ 
     @ViewBuilder
     var askForAddCurrentLocation : some View {
         
@@ -83,6 +71,20 @@ struct LocationSearchListView: View {
         }
         
     }
+    
+    private func showContentUnavailableView(titel:String,iconName:String,desc:String,@ViewBuilder action: () -> some View = { EmptyView() }) -> some View {
+        ContentUnavailableView(label: {
+            Label(
+                title: { Text(titel).fontNunito(.regular, size: 22) },
+                icon: { Image(systemName: iconName).foregroundStyle(.primary) }
+            )
+        }, description: {
+            Text(desc)
+                .padding(.top,8)
+                .fontNunito(.light, size: 16)
+        }, actions: action)
+    }
+    
     
 //    @ViewBuilder
 //    var askUserForPermissionChange : some View {

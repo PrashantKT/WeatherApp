@@ -19,7 +19,7 @@ struct MainScreen: View {
                     Image(systemName: "map.fill")
                     Text("Locations")
                 }
-            WeatherView()
+            WeatherInfoView()
                 .tabItem {
                     Image(systemName: "smoke.fill")
                     Text("Weather")

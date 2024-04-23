@@ -21,6 +21,8 @@ class MyLocationsViewModel:ObservableObject {
     @Published var isNeedToAskLocationPermission = false
     @Published var askUserToChangeLocationPermission = false
     
+    @Published var isShowingWeatherScreen = false
+    
     @Published var showError:AppError?
 
 
@@ -53,10 +55,12 @@ class MyLocationsViewModel:ObservableObject {
     }
     
     init()  {
+        
         locationPermissionStatus()
         
         $locationSearch
             .receive(on: DispatchQueue.main)
+            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
             .sink { value in
                 print("value \(value)")
                 let valueUpdated = value.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -68,7 +72,7 @@ class MyLocationsViewModel:ObservableObject {
             }.store(in: &cancellables)
         
         
-        
+        // when we request first time the location permission - we sink the value and check the permission status 
          locationManager
             .$userLocation
             .sink { location in
@@ -82,7 +86,7 @@ class MyLocationsViewModel:ObservableObject {
                       
                     } else {
                         if self.isFetchingCurrentLocation {
-                            self.addUserLocation(location: location!.coordinate)
+                            self.showWeatherScreenFor(location: location!.coordinate)
                             self.isFetchingCurrentLocation = false
                         }
                         
@@ -115,7 +119,7 @@ class MyLocationsViewModel:ObservableObject {
     
     func fetchCurrentLocation() {
         if let currentLocation = locationManager.userLocation {
-            self.addUserLocation(location: currentLocation.coordinate)
+            self.showWeatherScreenFor(location: currentLocation.coordinate)
             self.isFetchingCurrentLocation = false
 
         } else {
@@ -130,6 +134,10 @@ class MyLocationsViewModel:ObservableObject {
 
         }
 
+    }
+    
+    func showWeatherScreenFor(location:CLLocationCoordinate2D) {
+        self.isShowingWeatherScreen = true
     }
     
     func addUserLocation(location:CLLocationCoordinate2D) {

@@ -9,9 +9,24 @@ import SwiftUI
 
 struct WeatherHourlyView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ScrollView(.horizontal,showsIndicators: false) {
+            HStack(spacing:0) {
+                ForEach(1...24,id: \.self) { i in
+
+                    VStack(spacing:0) {
+                        WeatherIconView(width: 55).padding()
+
+                        CommonTitleValueLabelView(title: "7:00", value: "21°")
+                    }
+                    .coverFullScreen()
+                }
+
+            }
+        }
     }
 }
+
+
 
 #Preview {
     WeatherHourlyView()

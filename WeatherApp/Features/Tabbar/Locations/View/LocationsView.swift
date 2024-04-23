@@ -44,7 +44,24 @@ struct LocationsView: View {
         }
         .coverFullScreen()
         .background(.appBackground)
-        .showErrorAlert(error: $locationViewModel.showError)
+        .showErrorAlert(error: $locationViewModel.showError) {error in
+            switch error {
+            case .locationPermission:
+                Button("Settings") {
+                    if let url = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    }
+                }
+                Button("Cancel") {
+                    
+                }
+            case nil:
+                EmptyView()
+            }
+        }.fullScreenCover(isPresented: $locationViewModel.isShowingWeatherScreen, content: {
+            WeatherInfoView()
+                .environmentObject(locationViewModel)
+        })
         
       
 
