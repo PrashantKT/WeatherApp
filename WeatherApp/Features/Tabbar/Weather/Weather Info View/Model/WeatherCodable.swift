@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import SwiftUI
 struct WeatherResponse:Codable {
    
     
@@ -87,7 +87,7 @@ struct Daily:Codable {
 }
 
 
-enum WeatherCode: Int,Codable {
+enum WeatherCode: Int,Codable,CaseIterable {
     case clearSky = 0
     case mainlyClear = 1
     case partlyCloudy = 2
@@ -147,6 +147,54 @@ enum WeatherCode: Int,Codable {
         case .thunderstormSlight: return "Thunderstorm: Slight intensity"
         case .thunderstormWithHailSlight: return "Thunderstorm with hail: Slight intensity"
         case .thunderstormWithHailHeavy: return "Thunderstorm with hail: Heavy intensity"
+        }
+    }
+}
+
+extension WeatherCode {
+    var symbol: Image? {
+           switch self {
+           case .clearSky: return Image(systemName: "sun.max.fill")
+           case .mainlyClear: return Image(systemName: "cloud.sun.fill")
+           case .partlyCloudy: return Image(systemName: "cloud.sun.fill")
+           case .overcast: return Image(systemName: "cloud.fill")
+           case .fog: return Image(systemName: "cloud.fog.fill")
+           case .depositingRimeFog: return Image(systemName: "cloud.fog.fill")
+           case .drizzleLight: return Image(systemName: "cloud.drizzle.fill")
+           case .drizzleModerate: return Image(systemName: "cloud.drizzle.fill")
+           case .drizzleDense: return Image(systemName: "cloud.drizzle.fill")
+           case .freezingDrizzleLight: return Image(systemName: "cloud.drizzle.fill")
+           case .freezingDrizzleDense: return Image(systemName: "cloud.drizzle.fill")
+           case .rainSlight: return Image(systemName: "cloud.rain.fill")
+           case .rainModerate: return Image(systemName: "cloud.rain.fill")
+           case .rainHeavy: return Image(systemName: "cloud.rain.fill")
+           case .freezingRainLight: return Image(systemName: "cloud.sleet.fill")
+           case .freezingRainHeavy: return Image(systemName: "cloud.sleet.fill")
+           case .snowfallSlight: return Image(systemName: "cloud.snow.fill")
+           case .snowfallModerate: return Image(systemName: "cloud.snow.fill")
+           case .snowfallHeavy: return Image(systemName: "cloud.snow.fill")
+           case .snowGrains: return Image(systemName: "cloud.snow.fill")
+           case .rainShowersSlight: return Image(systemName: "cloud.heavyrain.fill")
+           case .rainShowersModerate: return Image(systemName: "cloud.heavyrain.fill")
+           case .rainShowersViolent: return Image(systemName: "cloud.heavyrain.fill")
+           case .snowShowersSlight: return Image(systemName: "cloud.snow.fill")
+           case .snowShowersHeavy: return Image(systemName: "cloud.snow.fill")
+           case .thunderstormSlight: return Image(systemName: "cloud.bolt.fill")
+           case .thunderstormWithHailSlight: return Image(systemName: "cloud.bolt.fill")
+           case .thunderstormWithHailHeavy: return Image(systemName: "cloud.bolt.fill")
+           }
+       }
+    
+    
+}
+
+extension WeatherCode {
+    var foregroundColor: Color {
+        switch self {
+        case .clearSky, .mainlyClear, .partlyCloudy:
+            return Color.yellow // Yellow for clear and partly cloudy conditions
+        case .overcast, .fog, .depositingRimeFog, .drizzleLight, .drizzleModerate, .drizzleDense, .freezingDrizzleLight, .freezingDrizzleDense, .rainSlight, .rainModerate, .rainHeavy, .freezingRainLight, .freezingRainHeavy, .snowfallSlight, .snowfallModerate, .snowfallHeavy, .snowGrains, .rainShowersSlight, .rainShowersModerate, .rainShowersViolent, .snowShowersSlight, .snowShowersHeavy, .thunderstormSlight, .thunderstormWithHailSlight, .thunderstormWithHailHeavy:
+            return Color.blue // Blue for cloudy, rainy, snowy, and other adverse conditions
         }
     }
 }

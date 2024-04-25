@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1072D6C32BA4354600EE103C /* WeatherInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1072D6C22BA4354600EE103C /* WeatherInfoView.swift */; };
+		1097FEB02BD7A01700364F6B /* MyCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1097FEAF2BD7A01700364F6B /* MyCalendar.swift */; };
 		10A43C1F2BAC1E43009F19BD /* OpenMeteoSdk in Frameworks */ = {isa = PBXBuildFile; productRef = 10A43C1E2BAC1E43009F19BD /* OpenMeteoSdk */; };
 		10A43C212BAC1E5C009F19BD /* WeatherRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A43C202BAC1E5C009F19BD /* WeatherRequest.swift */; };
 		10A43C232BAC3886009F19BD /* WeatherCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A43C222BAC3886009F19BD /* WeatherCodable.swift */; };
@@ -70,6 +71,7 @@
 /* Begin PBXFileReference section */
 		100566CF2BD00D0600352803 /* TestCode.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = TestCode.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1072D6C22BA4354600EE103C /* WeatherInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherInfoView.swift; sourceTree = "<group>"; };
+		1097FEAF2BD7A01700364F6B /* MyCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCalendar.swift; sourceTree = "<group>"; };
 		10A43C202BAC1E5C009F19BD /* WeatherRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRequest.swift; sourceTree = "<group>"; };
 		10A43C222BAC3886009F19BD /* WeatherCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCodable.swift; sourceTree = "<group>"; };
 		10A500182B98731200ADDCAF /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -459,6 +461,7 @@
 				10D526402BA1DC5F00460A1E /* Constants.swift */,
 				10C24F622BA30A2000EEF87F /* LocationManager.swift */,
 				10DC79FB2BA732E80000B702 /* AppErrors.swift */,
+				1097FEAF2BD7A01700364F6B /* MyCalendar.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -621,6 +624,7 @@
 				10C24F5F2BA2E33700EEF87F /* SearchBar.swift in Sources */,
 				10D526432BA1DCFE00460A1E /* ViewFrame.swift in Sources */,
 				1072D6C32BA4354600EE103C /* WeatherInfoView.swift in Sources */,
+				1097FEB02BD7A01700364F6B /* MyCalendar.swift in Sources */,
 				10A43C232BAC3886009F19BD /* WeatherCodable.swift in Sources */,
 				10C24F512BA2DD6300EEF87F /* SettingsView.swift in Sources */,
 				10D5264E2BA1FE9A00460A1E /* Font.swift in Sources */,

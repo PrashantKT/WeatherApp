@@ -19,10 +19,25 @@ struct WeatherInfoView: View {
                 WeatherHourlyView()
                 WeatherForecastListView().padding([.top,.horizontal])
                 Divider()
-                buttonRowView(title: "10 Days Forecast")
-                    .padding([.top,.horizontal])
-                buttonRowView(title: "Monthly Forecast")
-                    .padding([.horizontal])
+                NavigationLink {
+                    DateForecastView(dayRange: .days(number: 10))
+                } label: {
+                    buttonRowView(title: "10 Days Forecast")
+                        .padding([.top,.horizontal])
+
+                }
+                .foregroundStyle(.primary)
+                
+                NavigationLink {
+                    DateForecastView(dayRange: .monthly)
+
+                } label: {
+                    buttonRowView(title: "Monthly Forecast")
+                        .padding([.horizontal])
+
+                }
+                .foregroundStyle(.primary)
+
 
 //                    .background(Color.red)
                 

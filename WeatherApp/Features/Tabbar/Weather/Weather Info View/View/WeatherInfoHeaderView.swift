@@ -18,6 +18,8 @@ struct WeatherInfoHeaderView :  View {
     let currentTempDate = Calendar.current.date(bySettingHour: Int.random(in: 13...14), minute:Int.random(in: 0...59) , second: 0, of: Date())!
     let currentUVIndex = CGFloat.random(in: 0.0...0.99)
 
+    let condition = WeatherCode.allCases.randomElement()!
+    
     var body: some View {
         VStack(alignment: .leading) {
           
@@ -59,17 +61,19 @@ struct WeatherInfoHeaderView :  View {
                         .fontNunito(.semibold, size: .mediumFontSize)
                         .baselineOffset(29)
                 }
-                Text("Clear")
+                Text(condition.description)
                     .fontNunito(.light, size: .mediumFontSize)
 
                 Text("Feels like 16°")
                     .fontNunito(.light, size: .mediumFontSize)
             }
             Spacer()
-            Image(systemName: "moon.fill")
-                .foregroundStyle(Color.yellow.gradient)
+            condition.symbol
+//                .symbolEffect(.variableColor.hideInactiveLayers, value: isExpanded)
+                .foregroundStyle(condition.foregroundColor.gradient)
                 .font(.system(size: 70))
                 .rotationEffect(.degrees( isExpanded ? 360 : 0))
+                .contentTransition(.symbolEffect(.replace))
         }
         .onAppear {
             withAnimation(.bouncy) {

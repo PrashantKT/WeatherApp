@@ -42,18 +42,22 @@ struct MinMaxTemperatureChartView : View {
                         .stroke(Color.appBackgroundSecond,lineWidth: 2)
                     
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(.linearGradient(colors: [.loader,.loader.opacity(0.5),.primary.opacity(0.2),.loader.opacity(0.8)], startPoint: .leading, endPoint: .trailing))
+                        .fill(.linearGradient(colors: [.loader.opacity(0.8),.loader,.loader.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .frame(width: proxy.size.width * (calculateEndRangeOffset() - calculateStartRangeOffset()))
                         .coverH(alignment: .leading)
                         .offset(x:calculateStartRangeOffset() * proxy.size.width)
+                        .saturation(10)
 
                    
                     if let currentValue {
                         Circle()
                             .fill(Color.mainTint)
                             .frame(width: 6)
+                            .background(Circle().stroke(Color.red, lineWidth: 1.0))
+//                            .shadow(Color.red,radius: 2)
                             .offset(x:calculateOffset(currentValue: currentValue) * proxy.size.width - 3)
                             .coverFullScreen(alignment: .leading)
+                            
                     }
                 }
                 
@@ -80,5 +84,5 @@ struct MinMaxTemperatureChartView : View {
 }
 
 #Preview {
-    MinMaxTemperatureChartView(maxWeeklyTemp: 50, minWeeklyTemp: 30)
+    MinMaxTemperatureChartView(maxWeeklyTemp: 50, minWeeklyTemp: 30,isCurrentDate: true)
 }

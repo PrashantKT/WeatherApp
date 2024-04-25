@@ -33,6 +33,7 @@ struct WeatherIconView : View {
         .frame(width: width,height: width)
         .background(Color.appBackgroundSecond)
         .background(in: .rect(cornerRadius: 8))
+//        .saturation(1.2)
         .compositingGroup()
         .shadow(radius: 1)
 
