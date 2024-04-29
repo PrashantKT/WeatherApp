@@ -28,8 +28,9 @@ struct LoaderView:ViewModifier {
                  }
                  .coverFullScreen()
                  .background(.ultraThinMaterial)
+                 .saturation(1.9)
                  .onAppear {
-                     withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                     withAnimation(.linear(duration: 3).repeatForever(autoreverses: true)) {
                          isAnimating = true
                      }
                  }
@@ -47,25 +48,32 @@ struct LoaderView:ViewModifier {
         ZStack {
             Image(systemName: "cloud.fill")
                 .transition(.symbolEffect(.appear))
-                .foregroundStyle(Color.loader)
+                .foregroundStyle(isAnimating ? Color.loader.gradient : Color.gray.gradient)
                 .font(.system(size: 70))
-                
+                .opacity(isAnimating ? 1.0 : 0.9)
 
-            Image(systemName: "sun.max.fill")
-                .transition(.symbolEffect(.appear))
-                .foregroundStyle(Color.yellow.gradient)
+
+            Image(systemName:  "sun.max.fill" )
+//                .transition(.symbolEffect(.appear))
+                .foregroundStyle(isAnimating ? Color.yellow.gradient : Color.orange.gradient)
                 .font(.system(size: 70))
-                .rotationEffect(isAnimating ? .degrees(360) :     .degrees(0))
-                .symbolEffect(.variableColor, options: .repeating, value: isAnimating)
+                .rotationEffect(isAnimating ? .degrees(90) : .degrees(0))
+                .symbolEffect(.variableColor, options: .default, value: isAnimating)
                 .offset(x:20,y:17)
+                .scaleEffect(isAnimating ? 1.0 : 0.9)
+                .opacity(isAnimating ? 1.0 : 0.6)
+//                .zIndex(isAnimating ? 2 : 1)
 
             
             Image(systemName: "cloud.fill")
                 .transition(.symbolEffect(.appear))
-                .foregroundStyle(Color.loader)
+                .foregroundStyle(isAnimating ? Color.gray.gradient : Color.loader.gradient)
                 .font(.system(size: 70))
-                .offset(x:40,y:35)
-            
+                .offset(x: 40  ,y: 35)
+                .opacity(isAnimating ? 1.0 : 0.8)
+
+//                .scaleEffect(isAnimating ? 0.9 : 0.5)
+
             
         }
     }

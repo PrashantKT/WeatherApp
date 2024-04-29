@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct WeatherIconView : View {
-    var systemIcon:String = "cloud.moon"
+    var systemIcon:Image? = Image(systemName:  "cloud.moon")
     var systemIconColor:Color = Color.primary
 
     var width:CGFloat = 65
@@ -17,7 +17,7 @@ struct WeatherIconView : View {
     var body: some View {
         ZStack {
 
-            Image(systemName: systemIcon)
+            systemIcon
                 .font(.title)
                 .foregroundStyle(systemIconColor)
             if let overlayText {

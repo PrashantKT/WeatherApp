@@ -11,6 +11,7 @@ enum Constants {
     static let baseUrl = "https"
     static let apiToken = ""
     
+    static let commonTimeZone = TimeZone.current
 }
 
 enum FontSize {

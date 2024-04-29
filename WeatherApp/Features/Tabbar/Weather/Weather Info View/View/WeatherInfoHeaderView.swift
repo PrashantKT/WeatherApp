@@ -12,14 +12,9 @@ struct WeatherInfoHeaderView :  View {
 
     @State private var temperature = 0
     @State private var trimEnd: CGFloat = 0.2
-
-    let dayLightStart = Calendar.current.date(bySettingHour: Int.random(in: 5...6), minute: Int.random(in: 0...59), second: 0, of: Date())!
-    let dayLightEnd = Calendar.current.date(bySettingHour: Int.random(in: 17...18), minute:Int.random(in: 0...59) , second: 0, of: Date())!
-    let currentTempDate = Calendar.current.date(bySettingHour: Int.random(in: 13...14), minute:Int.random(in: 0...59) , second: 0, of: Date())!
-    let currentUVIndex = CGFloat.random(in: 0.0...0.99)
-
-    let condition = WeatherCode.allCases.randomElement()!
+    @EnvironmentObject var weatherInfoVM:WeatherInfoViewModel
     
+
     var body: some View {
         VStack(alignment: .leading) {
           
@@ -47,13 +42,13 @@ struct WeatherInfoHeaderView :  View {
     
     @ViewBuilder
     var currentWeatherInfo : some View {
-        Text("Sat, 29 April, 04:59")
+        Text(weatherInfoVM.formattedDateTime)
             .fontNunito(.light, size: .smallFontSize)
             .foregroundStyle(Color.font)
         HStack{
             VStack(alignment: .leading) {
                 HStack (spacing:2){
-                    Text("\(temperature)")
+                    Text(weatherInfoVM.currentFormattedTemp)
                         .fontNunito(.semibold, size: 45)
                         .contentTransition(.numericText())
 
@@ -61,25 +56,21 @@ struct WeatherInfoHeaderView :  View {
                         .fontNunito(.semibold, size: .mediumFontSize)
                         .baselineOffset(29)
                 }
-                Text(condition.description)
+                Text(weatherInfoVM.currentCondition.description)
                     .fontNunito(.light, size: .mediumFontSize)
 
-                Text("Feels like 16°")
+                Text("Feels like \(weatherInfoVM.currentFeelsLikeFormattedTemp)°")
                     .fontNunito(.light, size: .mediumFontSize)
             }
             Spacer()
-            condition.symbol
+            weatherInfoVM.currentCondition.symbol
 //                .symbolEffect(.variableColor.hideInactiveLayers, value: isExpanded)
-                .foregroundStyle(condition.foregroundColor.gradient)
+                .foregroundStyle(weatherInfoVM.currentCondition.foregroundColor.gradient)
                 .font(.system(size: 70))
                 .rotationEffect(.degrees( isExpanded ? 360 : 0))
                 .contentTransition(.symbolEffect(.replace))
         }
-        .onAppear {
-            withAnimation(.bouncy) {
-                temperature = Int.random(in: 16...20)
-            }
-        }
+        
     }
     
     
@@ -87,11 +78,12 @@ struct WeatherInfoHeaderView :  View {
     var expandedView : some View {
         VStack(spacing:16) {
             HStack {
-                CommonTitleValueLabelView(title: "Sunrise", value: "04:52")        .coverFullScreen()
+                CommonTitleValueLabelView(title: "Sunrise", value:weatherInfoVM.sunriseTime())        .coverFullScreen()
 
-                CommonTitleValueLabelView(title: "Daylight", value: "13 h 33 min")        .coverFullScreen()
+                CommonTitleValueLabelView(title: "Daylight", value: weatherInfoVM.dayLightDuration())
+                    .coverFullScreen()
 
-                CommonTitleValueLabelView(title: "Sunset", value: "04:52")        .coverFullScreen()
+                CommonTitleValueLabelView(title: "Sunset", value: weatherInfoVM.sunsetTime())        .coverFullScreen()
 
             }
             
@@ -99,20 +91,23 @@ struct WeatherInfoHeaderView :  View {
                 daylightProgressView
             }
             HStack {
-                CommonTitleValueLabelView(title: "t° max, min", value: "122° 116°")        .coverFullScreen()
+                CommonTitleValueLabelView(title: "t° max, min", value: weatherInfoVM.maxMinTemperature().max + "°, " + weatherInfoVM.maxMinTemperature().min + "°")
+                    .coverFullScreen()
 
                 uvIndexView
-                CommonTitleValueLabelView(title: "Pressure", value: "04:52")        .coverFullScreen()
+                CommonTitleValueLabelView(title: "Pressure", value: weatherInfoVM.pressure)        .coverFullScreen()
 
             }
             .padding(.top,12)
 
             HStack {
-                CommonTitleValueLabelView(title: "Precipprob", value: "0%")        .coverFullScreen()
+                CommonTitleValueLabelView(title: "Precipprob", value: weatherInfoVM.precipitationProbability())
+                    .coverFullScreen()
 
-                CommonTitleValueLabelView(title: "humidity", value: "77%")        .coverFullScreen()
+                CommonTitleValueLabelView(title: "humidity", value: weatherInfoVM.humidity)        .coverFullScreen()
 
-                CommonTitleValueLabelView(title: "Wind", value: "5 m/s, SW")        .coverFullScreen()
+                CommonTitleValueLabelView(title: "Wind", value: weatherInfoVM.windSpeed + "m/s, " +  weatherInfoVM.windDirection)
+                    .coverFullScreen()
 
             }
             .padding(.top,12)
@@ -144,7 +139,7 @@ struct WeatherInfoHeaderView :  View {
                                 Circle()
                                     .foregroundStyle(Color.secondary)
                                     .frame(height:12)
-                                    .position(x: proxy.frame(in: .local).maxX * currentUVIndex, y: proxy.frame(in: .local).midY)
+                                    .position(x: proxy.frame(in: .local).maxX * weatherInfoVM.uvIndex(), y: proxy.frame(in: .local).midY)
                                     
                             }
                             .coverFullScreen()
@@ -164,7 +159,7 @@ struct WeatherInfoHeaderView :  View {
                 let diameter:CGFloat = 130
                
                 Circle()
-                    .trim(from: 0.2 ,to : trimEnd )
+                    .trim(from: 0.2 ,to : 0.8)
                     .stroke(style: .init(dash: [8]))
                     .frame(width: diameter)
                     .rotationEffect( .degrees(90))
@@ -175,7 +170,7 @@ struct WeatherInfoHeaderView :  View {
                 let angleStart = calculatePointOnCircle(radius: diameter / 2, angle: .degrees((360 * 0.2) + 90))
                 let angleEnd = calculatePointOnCircle(radius: diameter / 2, angle: .degrees((360 * 0.8) + 90))
                 
-                let sunPercentage = calculateDayLightPercentage() / 100.0  // Convert percentage to a value between 0 and 1
+                let sunPercentage = weatherInfoVM.calculateDayLightPercentage() / 100.0  // Convert percentage to a value between 0 and 1
                 let scaledSunAngle = 0.2 + (sunPercentage * 0.6)  // Map the sun percentage to the circle's arc range 0.6 = 0.8 - 0.2 , formula is startRange + ( value * (endRane - startRange) )
 
                 let sunPos = calculatePointOnCircle(radius: diameter / 2, angle: .degrees((360 * scaledSunAngle) + 90))
@@ -207,7 +202,6 @@ struct WeatherInfoHeaderView :  View {
 
                             Path { point in
                                 point.addArc(center: midPoint, radius: diameter / 2, startAngle: endAngle, endAngle: startAngle, clockwise: true)
-//                                point.move(to: CGPoint(x: midPoint.x + angleStart.x, y: midPoint.y + angleStart.y))
                                 point.addLine(to: CGPoint(x: midPoint.x + sunPos.x, y: midPoint.y + angleStart.y))
                                 point.addLine(to: CGPoint(x: midPoint.x + sunPos.x , y: midPoint.y + angleStart.y))
                                 point.closeSubpath()
@@ -224,19 +218,13 @@ struct WeatherInfoHeaderView :  View {
                         .offset(x: sunPos.x,y: sunPos.y)
                     
                     Circle()
-                        .trim(from: 0.2 ,to :  trimEnd)
+                        .trim(from: 0.2 ,to :  scaledSunAngle)
                         .stroke()
                         .frame(width: diameter)
                         .rotationEffect(.degrees(90))
                       
                 }
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        withAnimation(.easeIn(duration: 0.3)) {
-                            trimEnd = scaledSunAngle
-                        }
-                    }
-                }
+             
 
         }
         .frame(height: 130)
@@ -245,21 +233,13 @@ struct WeatherInfoHeaderView :  View {
 
     }
     
-    
     func calculatePointOnCircle(radius:CGFloat,angle:Angle) -> CGPoint {
         let x = 0 + (radius) * cos(angle.radians)
         let y = 0 + (radius ) * sin(angle.radians)
         return CGPoint(x: x, y: y)
     }
     
-   
-    func calculateDayLightPercentage() -> Double {
-        let totalDaylightDuration = dayLightEnd.timeIntervalSince(dayLightStart)
-        let elapsedTimeSinceDaylightStart = currentTempDate.timeIntervalSince(dayLightStart)
 
-        let daylightPercentage = (elapsedTimeSinceDaylightStart / totalDaylightDuration) * 100
-        return daylightPercentage
-    }
 }
 
 #Preview {

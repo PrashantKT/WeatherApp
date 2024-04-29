@@ -12,10 +12,13 @@ class MyCalendar {
     
     static let shared = MyCalendar()
 
-    let cal = Calendar.current
+    private (set) var cal : Calendar
     private init() {
-        
+        cal = Calendar(identifier: .gregorian)
+        cal.timeZone = Constants.commonTimeZone
     }
+    
+    
     
     var currentDay:Date {
         cal.startOfDay(for: Date())
@@ -53,6 +56,8 @@ class MyCalendar {
         return cal.weekdaySymbols[weekDay - 1]
     }
     
+    
+    
 }
 
 
@@ -60,5 +65,17 @@ extension Date {
     
     func weekSymbol() -> String {
         MyCalendar.shared.weekSymbol(from: self)
+    }
+    
+    func isTheSameDay(_ date:Date) -> Bool {
+        let day = MyCalendar.shared.cal.dateComponents(in: Constants.commonTimeZone, from: self).day
+        return MyCalendar.shared.cal.component(.day, from: date) == day
+    }
+    
+    func isTheSameHour(_ date:Date) -> Bool {
+        let hour = MyCalendar.shared.cal.dateComponents(in: Constants.commonTimeZone, from: self).hour
+
+        return MyCalendar.shared.cal.component(.hour, from: date) == hour
+
     }
 }

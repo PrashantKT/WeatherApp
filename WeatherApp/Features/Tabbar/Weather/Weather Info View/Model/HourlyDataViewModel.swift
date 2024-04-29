@@ -6,3 +6,22 @@
 //
 
 import Foundation
+
+
+
+struct HourlyDataViewModel:Identifiable {
+    var id = UUID()
+    var time:String
+    var temperature:String
+    var precipitation:Int? = nil
+    var weatherCode:WeatherCode
+    
+    var precipitationFormatted:String? {
+        if let precipitation,precipitation > 0 {
+            return "\(precipitation ) %"
+        }
+        return nil
+    }
+}
+
+

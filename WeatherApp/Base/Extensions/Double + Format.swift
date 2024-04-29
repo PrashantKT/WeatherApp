@@ -6,3 +6,11 @@
 //
 
 import Foundation
+
+extension Double {
+    
+    func formattedDecimal(_ value:Int) -> String {
+    
+        return self.formatted(.number.precision(.fractionLength(value)))
+    }
+}

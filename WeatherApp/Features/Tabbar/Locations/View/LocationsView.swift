@@ -59,8 +59,9 @@ struct LocationsView: View {
                 EmptyView()
             }
         }.fullScreenCover(isPresented: $locationViewModel.isShowingWeatherScreen, content: {
-            WeatherInfoView()
-                .environmentObject(locationViewModel)
+            if let location = locationViewModel.locationSelected {
+                WeatherInfoView.init(coordinates: location)
+            }
         })
         
       

@@ -15,8 +15,9 @@ struct WeatherResponse:Codable {
     let current: Current?
     let hourly: Hourly?
     let daily: Daily?
-    
-    internal init(latitude: Double? = nil, longitude: Double? = nil, timezone: String? = nil, timezone_abbreviation: String? = nil, current: Current? = nil, hourly: Hourly? = nil, daily: Daily? = nil) {
+    let utc_offset_seconds:Int?
+
+    internal init(latitude: Double? = nil, longitude: Double? = nil, timezone: String? = nil, timezone_abbreviation: String? = nil, current: Current? = nil, hourly: Hourly? = nil, daily: Daily? = nil,utc_offset_seconds:Int? = nil ) {
         self.latitude = latitude
         self.longitude = longitude
         self.timezone = timezone
@@ -24,6 +25,7 @@ struct WeatherResponse:Codable {
         self.current = current
         self.hourly = hourly
         self.daily = daily
+        self.utc_offset_seconds = utc_offset_seconds
     }
 }
 
@@ -34,8 +36,11 @@ struct Current: Codable {
     let interval: Int?
     let temperature2M: Double?
     let relativeHumidity2M: Int?
-    let apparentTemperature, precipitation, rain: Float?
+    let apparentTemperature, precipitation, rain: Double?
     let weatherCode: WeatherCode?
+    let surfacePressure:Double?
+    let windSpeed10m:Double?
+    let windDirection10m:Int?
 
     enum CodingKeys: String, CodingKey {
         case time, interval
@@ -44,6 +49,10 @@ struct Current: Codable {
         case apparentTemperature = "apparent_temperature"
         case precipitation, rain
         case weatherCode = "weather_code"
+        case surfacePressure = "surface_pressure"
+        case windSpeed10m = "wind_speed_10m"
+        case windDirection10m = "wind_direction_10m"
+
     }
 }
 

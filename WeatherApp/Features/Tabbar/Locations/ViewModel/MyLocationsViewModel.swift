@@ -22,7 +22,8 @@ class MyLocationsViewModel:ObservableObject {
     @Published var askUserToChangeLocationPermission = false
     
     @Published var isShowingWeatherScreen = false
-    
+    @Published var locationSelected:CLLocationCoordinate2D?
+
     @Published var showError:AppError?
 
 
@@ -137,6 +138,7 @@ class MyLocationsViewModel:ObservableObject {
     }
     
     func showWeatherScreenFor(location:CLLocationCoordinate2D) {
+        self.locationSelected = location
         self.isShowingWeatherScreen = true
     }
     

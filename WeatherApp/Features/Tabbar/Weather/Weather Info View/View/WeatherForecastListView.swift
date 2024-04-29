@@ -8,33 +8,38 @@
 import SwiftUI
 
 struct WeatherForecastListRow : View {
-    let maxWeeklyTemp = 55
-    let minWeeklyTemp = 26
+    var maxRangeTemp = 55
+    var minRangeTemp = 26
     var isCurrentDate:Bool = false
+    var dataModel: DailyData
+
+    
     var body: some View {
         HStack {
-            WeatherIconView(systemIcon: "sun.max.fill",systemIconColor: .yellow,width: 55).padding([.vertical,.trailing],8)
+            WeatherIconView(systemIcon: dataModel.weatherCode.symbol,systemIconColor: dataModel.weatherCode.foregroundColor,width: 55,overlayText: dataModel.precipitationFormatted).padding([.vertical,.trailing],8)
             VStack(alignment:.leading) {
-                Text("Today")
+                Text(dataModel.time)
                     .fontNunito(.regular, size: 14)
-                Text("Rain, Partially cloudy")
+                Text(dataModel.weatherCode.description)
                     .fontNunito(.regular, size: 11)
                     .lineLimit(2)
             }
-            Spacer()
+            .frame(maxWidth: 100,alignment: .leading)
+//            Spacer()
             
-            MinMaxTemperatureChartView(maxWeeklyTemp: maxWeeklyTemp, minWeeklyTemp: minWeeklyTemp,isCurrentDate:isCurrentDate)
+            MinMaxTemperatureChartView(maxWeeklyTemp: maxRangeTemp, minWeeklyTemp: minRangeTemp,isCurrentDate:isCurrentDate,minV: dataModel.temperatureMin,maxV: dataModel.temperatureMax,currentValue: dataModel.currentTemperature)
             
         }
     }
 }
 
 struct WeatherForecastListView : View {
+    var data:DailyDataViewModel
     var body: some View {
         
         LazyVStack {
-            ForEach(1...10,id:\.self) { index in
-                WeatherForecastListRow(isCurrentDate: index == 1)
+            ForEach(0..<data.data.count,id:\.self) { index in
+                WeatherForecastListRow(maxRangeTemp: data.rangeMaxTemp, minRangeTemp: data.rangeMinTemp, isCurrentDate: index == data.todayIndex,dataModel: data.data[index])
             }
         }
         
@@ -42,5 +47,5 @@ struct WeatherForecastListView : View {
 }
 
 #Preview {
-    WeatherForecastListView()
+    WeatherForecastListView(data: WeatherInfoViewModel(response: testData).prepareDailyData())
 }

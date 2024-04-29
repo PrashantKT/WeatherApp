@@ -8,15 +8,20 @@
 import SwiftUI
 
 struct WeatherHourlyView: View {
+
+    @EnvironmentObject var weatherInfoVM:WeatherInfoViewModel
+    
     var body: some View {
         ScrollView(.horizontal,showsIndicators: false) {
             HStack(spacing:0) {
-                ForEach(1...24,id: \.self) { i in
+                ForEach((weatherInfoVM.prepareHourlyData())) { i in
 
                     VStack(spacing:0) {
-                        WeatherIconView(width: 55).padding()
+                        WeatherIconView(systemIcon: i.weatherCode.symbol,systemIconColor: i.weatherCode.foregroundColor,width: 55, overlayText: i.precipitationFormatted)
+                            .padding([.horizontal])
+                            .padding(.vertical,8)
 
-                        CommonTitleValueLabelView(title: "7:00", value: "21°")
+                        CommonTitleValueLabelView(title: i.time, value: "\(i.temperature)°")
                     }
                     .coverFullScreen()
                 }
@@ -29,5 +34,5 @@ struct WeatherHourlyView: View {
 
 
 #Preview {
-    WeatherHourlyView()
+    WeatherHourlyView().environmentObject(WeatherInfoViewModel(response:testData))
 }
