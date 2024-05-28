@@ -24,6 +24,7 @@ struct SearchBar: View {
                     .onSubmit {
                         focusState.wrappedValue.toggle()
                     }
+                
                     .frame(height: 55)
                 if !searchText.isEmpty {
                     Button("", systemImage: "xmark.circle.fill") {

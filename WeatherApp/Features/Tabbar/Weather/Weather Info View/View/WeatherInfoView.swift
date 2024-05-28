@@ -8,9 +8,16 @@
 import SwiftUI
 import CoreLocation
 
+enum WeatherInfoViewMode {
+    case addLocation
+    case viewDetails
+}
 struct WeatherInfoView: View {
     @Environment(\.dismiss) var dismiss
-    var coordinates:CLLocationCoordinate2D = .init()
+    var location:SavedLocation
+    var screenFlowType = WeatherInfoViewMode.addLocation
+
+    var addButtonAction:(() -> ())? = nil
     
     @StateObject private var viewModel:WeatherInfoViewModel = .init()
     
@@ -18,7 +25,7 @@ struct WeatherInfoView: View {
         NavigationStack {
             ScrollView {
                 WeatherInfoHeaderView().padding([.top,.horizontal]).environmentObject(viewModel)
-                WeatherHourlyView().environmentObject(viewModel)
+                WeatherHourlyView(data: viewModel.prepareHourlyData())
                 WeatherForecastListView(data: viewModel.prepareDailyData()).padding([.top,.horizontal]).environmentObject(viewModel)
                 Divider()
                 NavigationLink {
@@ -26,55 +33,41 @@ struct WeatherInfoView: View {
                 } label: {
                     buttonRowView(title: "10 Days Forecast")
                         .padding([.top,.horizontal])
-
                 }
                 .foregroundStyle(.primary)
-                
-                NavigationLink {
-                    DateForecastView(dayRange: .monthly)
-
-                } label: {
-                    buttonRowView(title: "Monthly Forecast")
-                        .padding([.horizontal])
-
-                }
-                .foregroundStyle(.primary)
-
-
-//                    .background(Color.red)
-                
             }
             .coverFullScreen()
             .background(Color.appBackground.ignoresSafeArea())
-            .navigationTitle("Weather")
+            .toolbar(content: toolBarButtons)
+            .navigationTitle(location.originalName)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button(role: .cancel) {
-                        dismiss()
-                    } label: {
-                        Text("Cancel")
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(role: .cancel) {
-                        
-                    } label: {
-                        Text("Add")
-                    }
-                }
-            }
         }
         .task {
-            do {
-                viewModel.response = try await WeatherRequest().requestWeather(coordinates: coordinates)
-                viewModel.isLoading = false
-            } catch {
-                print("Exception \(error)")
-            }
+            await viewModel.fetchWeatherData(coordinates: location.coordinates)
         }
         .modifier(LoaderView(isLoading: $viewModel.isLoading))
 
+
+    }
+    
+    @ToolbarContentBuilder
+    func toolBarButtons() -> some ToolbarContent {
+        if screenFlowType == .addLocation {
+            ToolbarItem(placement: .topBarLeading) {
+                Button(role: .cancel) {
+                    dismiss()
+                } label: {
+                    Text("Cancel")
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    addButtonAction?()
+                } label: {
+                    Text("Add")
+                }
+            }
+        }
     }
     
     func buttonRowView(title:String) -> some View{
@@ -94,7 +87,7 @@ struct WeatherInfoView: View {
 
 
 #Preview {
-    WeatherInfoView(coordinates: .init(latitude: 21.6422, longitude: 69.6093))
+    MainScreen()
 }
 
 

@@ -25,6 +25,8 @@ class LocationManager:NSObject, ObservableObject {
     func askForLocationPermission() {
         if manager.authorizationStatus == .notDetermined {
             manager.requestWhenInUseAuthorization()
+        } else {
+            manager.requestLocation()
         }
     }
     
@@ -40,6 +42,15 @@ extension LocationManager:CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("Location Fetched \(locations)")
+        userLocation = manager.location
+        print("Location permission changed ")
+
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
+        print("Location Failed \(error)")
+        userLocation = nil
+        manager.stopUpdatingLocation()
+
     }
 }

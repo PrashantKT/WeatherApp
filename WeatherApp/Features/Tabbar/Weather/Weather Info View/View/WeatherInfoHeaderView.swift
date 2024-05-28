@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct WeatherInfoHeaderView :  View {
     @State private var isExpanded = true
@@ -160,7 +161,7 @@ struct WeatherInfoHeaderView :  View {
                
                 Circle()
                     .trim(from: 0.2 ,to : 0.8)
-                    .stroke(style: .init(dash: [8]))
+                    .stroke(style: .init(dash: [4]))
                     .frame(width: diameter)
                     .rotationEffect( .degrees(90))
                     
@@ -201,10 +202,10 @@ struct WeatherInfoHeaderView :  View {
                             let endAngle = Angle.degrees((360 * scaledSunAngle) + 90)
 
                             Path { point in
-                                point.addArc(center: midPoint, radius: diameter / 2, startAngle: endAngle, endAngle: startAngle, clockwise: true)
-                                point.addLine(to: CGPoint(x: midPoint.x + sunPos.x, y: midPoint.y + angleStart.y))
-                                point.addLine(to: CGPoint(x: midPoint.x + sunPos.x , y: midPoint.y + angleStart.y))
-                                point.closeSubpath()
+                                point.addArc(center: midPoint, radius: diameter / 2, startAngle: startAngle, endAngle: endAngle, clockwise: false)
+//                                point.addLine(to: CGPoint(x: midPoint.x + sunPos.x, y: midPoint.y + angleStart.y))
+//                                point.addLine(to: CGPoint(x: midPoint.x + sunPos.x , y: midPoint.y + angleStart.y))
+//                                point.closeSubpath()
                             }
                             
                             .fill(.appBackgroundSecond.gradient)
@@ -243,5 +244,5 @@ struct WeatherInfoHeaderView :  View {
 }
 
 #Preview {
-    WeatherInfoView()
+    WeatherInfoView(location: SavedLocation(lat: 21.6422, lon: 69.60204, originalName: "Mumbai"))
 }

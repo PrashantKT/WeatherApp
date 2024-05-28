@@ -9,7 +9,9 @@ import Foundation
 import CoreLocation
 
 
-struct Location:Identifiable,Hashable {
+
+
+struct SearchedLocationModel:Identifiable,Hashable {
   
     
     var id: Float {
@@ -31,7 +33,7 @@ struct Location:Identifiable,Hashable {
         self.coordinates = coordinates
     }
     
-    static func == (lhs: Location, rhs: Location) -> Bool {
+    static func == (lhs: SearchedLocationModel, rhs: SearchedLocationModel) -> Bool {
         return lhs.coordinates.latitude == rhs.coordinates.latitude && lhs.coordinates.longitude == rhs.coordinates.longitude
     }
     
@@ -42,13 +44,13 @@ struct Location:Identifiable,Hashable {
 }
 
 
-extension Location {
+extension SearchedLocationModel {
     
-    static let tempData: [Location] = [
-        Location(locationName: "New York", temp: "20°C", condition: "Clear", iconName: "sun.max.fill",coordinates: .init(latitude: 72.5151, longitude: 65.51561)),
-        Location(locationName: "London", temp: "15°C", condition: "Cloudy", iconName: "cloud.fill",coordinates:.init(latitude: 72.5151, longitude: 65.51561)),
-        Location(locationName: "Tokyo", temp: "22°C", condition: "Rain", iconName: "cloud.rain.fill",coordinates:.init(latitude: 72.5151, longitude: 65.51561)),
-        Location(locationName: "Paris", temp: "18°C", condition: "Partly Cloudy", iconName: "cloud.sun.fill",coordinates:.init(latitude: 72.5151, longitude: 65.51561)),
+    static let tempData: [SearchedLocationModel] = [
+        SearchedLocationModel(locationName: "New York", temp: "20°C", condition: "Clear", iconName: "sun.max.fill",coordinates: .init(latitude: 72.5151, longitude: 65.51561)),
+        SearchedLocationModel(locationName: "London", temp: "15°C", condition: "Cloudy", iconName: "cloud.fill",coordinates:.init(latitude: 72.5151, longitude: 65.51561)),
+        SearchedLocationModel(locationName: "Tokyo", temp: "22°C", condition: "Rain", iconName: "cloud.rain.fill",coordinates:.init(latitude: 72.5151, longitude: 65.51561)),
+        SearchedLocationModel(locationName: "Paris", temp: "18°C", condition: "Partly Cloudy", iconName: "cloud.sun.fill",coordinates:.init(latitude: 72.5151, longitude: 65.51561)),
         // Add more locations as needed
     ]
 

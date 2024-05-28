@@ -22,7 +22,7 @@ enum AppError :LocalizedError {
     var errorMessage : String? {
         switch self {
         case .locationPermission:
-            "Location permission required to fetch your current location"
+            "Failed to access your location, Pl allow permission  to fetch your current location"
         }
     }
 }

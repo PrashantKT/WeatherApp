@@ -44,14 +44,14 @@ struct LocationSearchListView: View {
         
         showContentUnavailableView(titel: "Add your current location ?", iconName: "target", desc: "Let us determine your location so you don't waste time looking for it by yourself") {
             Button {
-                withAnimation(.snappy) {
-                    if !locationViewModel.isFetchingCurrentLocation {
-                        locationViewModel.isFetchingCurrentLocation = true
-                        focusState.wrappedValue = false
-                        locationViewModel.locationSearch = ""
-                        locationViewModel.fetchCurrentLocation()
+                    Task {
+                        if !locationViewModel.isFetchingCurrentLocation {
+                            locationViewModel.isFetchingCurrentLocation = true
+                            focusState.wrappedValue = false
+                            locationViewModel.locationSearch = ""
+                            await locationViewModel.fetchCurrentLocation()
+                        }
                     }
-                }
             } label: {
                 HStack {
                     if !locationViewModel.isFetchingCurrentLocation {

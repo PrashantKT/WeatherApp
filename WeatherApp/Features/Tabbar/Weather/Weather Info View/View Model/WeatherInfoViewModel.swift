@@ -6,24 +6,45 @@
 //
 
 import Foundation
+import CoreLocation
 
-
+@MainActor
 class WeatherInfoViewModel : ObservableObject {
     //View Properties
     @Published var response : WeatherResponse = .init()
     @Published var isLoading = true
 
+    private (set) var service:WeatherForeCastServiceable
+    
     init() {
-        
+        service = WeatherForeCastService()
     }
     
-    init(response: WeatherResponse, isLoading: Bool = true) {
+    init(service:WeatherForeCastServiceable = WeatherForeCastService(),  response: WeatherResponse, isLoading: Bool = true) {
         self.response = response
         self.isLoading = isLoading
+        self.service = service
     }
+    
+
+    func fetchWeatherData(coordinates:CLLocationCoordinate2D) async {
+        do {
+            let para = WeatherAPIParameters(latitude: "\(coordinates.latitude)", longitude: "\(coordinates.longitude)")
+            
+            response = try await service.fetchWeather(para: para.toDictionary()).get()
+            isLoading = false
+        } catch {
+            print("Exception \(error)")
+        }
+    }
+    
     
     private func findDailyDataIndex(of date:Date) -> Int? {
         response.daily?.time?.firstIndex(where: {$0.isTheSameDay(date)})
+        
+        
+        
+        
     }
     
     private func findHourlyDataIndex(of date:Date) -> Int? {
@@ -156,7 +177,7 @@ extension WeatherInfoViewModel {
                 continue
             }
             let dateFormatter = DateFormatter()
-            dateFormatter.timeZone = Constants.commonTimeZone
+//            dateFormatter.timeZone = Constants.commonTimeZone
             
             dateFormatter.dateFormat = "h a" // Format to display hour and AM/PM only
             let time = dateFormatter.string(from: date)
@@ -164,7 +185,7 @@ extension WeatherInfoViewModel {
             let weatherCode = response.hourly?.weatherCode?[index] ?? .clearSky
             let precipitation = response.hourly?.precipitationProbability?[index]
 
-            var singleData = HourlyDataViewModel(time: time, temperature: temp,precipitation:precipitation, weatherCode: weatherCode)
+            let singleData = HourlyDataViewModel(time: time, temperature: temp,precipitation:precipitation, weatherCode: weatherCode)
             result.append(singleData)
 
            

@@ -10,144 +10,127 @@ import CoreLocation
 import Combine
 
 @MainActor
-class MyLocationsViewModel:ObservableObject {
+class MyLocationsViewModel: ObservableObject {
     
-    
-    @Published var locations = [Location]()
     @Published var locationSearch = ""
-    @Published var searchList = [Location]()
+    @Published var searchList = [SearchedLocationModel]()
     
     @Published var isFetchingCurrentLocation = false
     @Published var isNeedToAskLocationPermission = false
     @Published var askUserToChangeLocationPermission = false
     
     @Published var isShowingWeatherScreen = false
-    @Published var locationSelected:CLLocationCoordinate2D?
-
-    @Published var showError:AppError?
-
+    @Published var locationSelected: SavedLocation?
+    @Published var showError: AppError?
 
     private var cancellables = Set<AnyCancellable>()
+    private var locationManager = LocationManager()
     
-    var locationManager = LocationManager()
+    var saveLocation = UserDefaultSavedLocation()
     
-    var isSearching:Bool {
+    init() {
+        setupBindings()
+        checkLocationPermissionStatus()
+    }
+
+    var isSearching: Bool {
         !locationSearch.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
-    var isSavedLocationAvailable:Bool {
-        return !locations.isEmpty
+    var isSavedLocationAvailable: Bool {
+        saveLocation.savedLocations.isEmpty
     }
     
-    var isMyLocationAdded:Bool {
+    var isMyLocationAdded: Bool {
         guard let currentLocation = locationManager.userLocation else {
             return false
         }
-        let radius:CLLocationDistance = 300
-        for location in locations {
+        let radius: CLLocationDistance = 300
+        return saveLocation.savedLocations.contains { location in
             let locationCoordinate = CLLocation(latitude: location.coordinates.latitude, longitude: location.coordinates.longitude)
-            let distance = currentLocation.distance(from: locationCoordinate)
-            
-            if distance <= radius {
-                return true
-            }
+            return currentLocation.distance(from: locationCoordinate) <= radius
         }
-        return false
     }
     
-    init()  {
-        
-        locationPermissionStatus()
-        
+    private func setupBindings() {
         $locationSearch
             .receive(on: DispatchQueue.main)
             .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
-            .sink { value in
-                print("value \(value)")
-                let valueUpdated = value.trimmingCharacters(in: .whitespacesAndNewlines)
-                if !valueUpdated.isEmpty {
-                    self.searchList = (0..<Int.random(in: 2...10)).map{_ in Location(locationName:UUID().uuidString)}
-                } else {
-                    self.searchList.removeAll()
-                }
-            }.store(in: &cancellables)
+            .dropFirst()
+            .sink { [weak self] value in
+                self?.handleSearchInput(value)
+            }
+            .store(in: &cancellables)
         
-        
-        // when we request first time the location permission - we sink the value and check the permission status 
-         locationManager
-            .$userLocation
-            .sink { location in
-                DispatchQueue.main.async {
-                    
-                    if location == nil {
-                        if self.isFetchingCurrentLocation {
-                            self.isFetchingCurrentLocation = false
-                            self.showError = .locationPermission
-                        }
-                      
-                    } else {
-                        if self.isFetchingCurrentLocation {
-                            self.showWeatherScreenFor(location: location!.coordinate)
-                            self.isFetchingCurrentLocation = false
-                        }
-                        
-                    }
-                }
-        }.store(in: &cancellables)
+        locationManager.$userLocation
+            .sink { [weak self] location in
+                self?.handleUserLocationUpdate(location)
+            }
+            .store(in: &cancellables)
     }
     
+    private func handleSearchInput(_ value: String) {
+        let trimmedValue = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        searchList = trimmedValue.isEmpty ? [] : (0..<Int.random(in: 2...10)).map { _ in SearchedLocationModel(locationName: UUID().uuidString) }
+    }
     
-    func locationPermissionStatus() {
-        switch locationManager.manager.authorizationStatus {
+    private func handleUserLocationUpdate(_ location: CLLocation?) {
+        Task {
+            if let location = location {
+                if isFetchingCurrentLocation {
+                    await showWeatherScreenFor(location: location.coordinate)
+                    isFetchingCurrentLocation = false
+                }
+            } else if isFetchingCurrentLocation {
+                isFetchingCurrentLocation = false
+                showError = .locationPermission
+            }
+        }
+    }
+    
+    private func checkLocationPermissionStatus() {
+        let status = locationManager.manager.authorizationStatus
+        switch status {
         case .notDetermined:
             isNeedToAskLocationPermission = true
-        case .restricted:
+        case .restricted, .denied:
             askUserToChangeLocationPermission = true
-        case .denied:
-            askUserToChangeLocationPermission = true
-        case .authorizedAlways:
-            isNeedToAskLocationPermission = false
-        case .authorizedWhenInUse:
-            isNeedToAskLocationPermission = false
-        case .authorized:
+        case .authorizedAlways, .authorizedWhenInUse, .authorized:
             isNeedToAskLocationPermission = false
         @unknown default:
             isNeedToAskLocationPermission = false
-
         }
     }
-   
     
-    func fetchCurrentLocation() {
+    func fetchCurrentLocation() async {
         if let currentLocation = locationManager.userLocation {
-            self.showWeatherScreenFor(location: currentLocation.coordinate)
-            self.isFetchingCurrentLocation = false
-
+            isFetchingCurrentLocation = false
+            await showWeatherScreenFor(location: currentLocation.coordinate)
         } else {
             locationManager.askForLocationPermission()
-            locationPermissionStatus()
+            checkLocationPermissionStatus()
             
             if askUserToChangeLocationPermission {
-                print("Location permission requres to add current location")
-                self.showError = .locationPermission
+                showError = .locationPermission
                 isFetchingCurrentLocation = false
             }
-
         }
-
     }
     
-    func showWeatherScreenFor(location:CLLocationCoordinate2D) {
-        self.locationSelected = location
-        self.isShowingWeatherScreen = true
+    private func showWeatherScreenFor(location: CLLocationCoordinate2D) async {
+        let pm = try? await CLGeocoder().reverseGeocodeLocation(CLLocation(latitude: location.latitude, longitude: location.longitude)).first
+        let locationName = "\(pm?.locality ?? ""), \(pm?.country ?? "")"
+        await MainActor.run {
+            self.locationSelected = SavedLocation(lat: location.latitude, lon: location.longitude, originalName: locationName)
+            self.isShowingWeatherScreen = true
+        }
     }
     
-    func addUserLocation(location:CLLocationCoordinate2D) {
-        locations.append(.init(locationName: "User Location", temp: "0.0", condition: "Not Determined", iconName: "sun.fill", coordinates: location))
-        
+    func addUserLocation() {
+        if let locationSelected {
+            try? saveLocation.saveLocation(locationSelected)
+        }
     }
-    
-
 }
 
 /*

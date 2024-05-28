@@ -151,9 +151,6 @@ struct DateForecastView: View {
                 }
                 
             }
-            
-            //            .scrollTargetLayout()
-            
         }
         .scrollPosition(id: $viewModel.scrollPos,anchor: .center)
         .padding(.vertical)
@@ -161,18 +158,6 @@ struct DateForecastView: View {
         .background(Color.appBackgroundSecond)
         .onAppear {
             viewModel.scrollPos = viewModel.selectedDate
-        }
-        
-        
-            
-        
-
-    }
-    
-    
-    var bodyView: some View {
-        ZStack {
-            Text("Hello")
         }
     }
 }

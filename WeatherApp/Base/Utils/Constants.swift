@@ -12,6 +12,13 @@ enum Constants {
     static let apiToken = ""
     
     static let commonTimeZone = TimeZone.current
+    
+}
+
+enum APIConstants {
+    static let baseURLForecast  = "https://api.open-meteo.com"
+    static let apiVersion  = "v1"
+
 }
 
 enum FontSize {

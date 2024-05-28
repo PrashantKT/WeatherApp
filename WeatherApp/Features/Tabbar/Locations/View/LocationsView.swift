@@ -10,30 +10,20 @@ import SwiftUI
 struct LocationsView: View {
     @StateObject private var locationViewModel = MyLocationsViewModel()
     @FocusState var searchFocus:Bool
-
+    @EnvironmentObject var saveLocation:UserDefaultSavedLocation
     var body: some View {
         VStack {
-            SearchBar(searchText: $locationViewModel.locationSearch,focusState: $searchFocus)
-                .padding()
+            
+            searchBar
+            .padding()
             
             if locationViewModel.isSearching || searchFocus {
                 LocationSearchListView(focusState: $searchFocus)
                     .background(.clear)
                     .environmentObject(locationViewModel)
             } else {
-                if !locationViewModel.locations.isEmpty {
-                    
-                    List {
-                        ForEach(locationViewModel.locations,id: \.self) {location in
-                            HStack {
-                                Text(location.locationName)
-                                Image(systemName: location.iconName)
-                                    
-                            }
-                            .fontNunito(.semibold, size: 15)
-                        }
-                    }
-                    
+                if !saveLocation.savedLocations.isEmpty {
+                    locationsList
                 } else {
                     contentUnAvailableViewForList
                 }
@@ -45,27 +35,56 @@ struct LocationsView: View {
         .coverFullScreen()
         .background(.appBackground)
         .showErrorAlert(error: $locationViewModel.showError) {error in
-            switch error {
-            case .locationPermission:
-                Button("Settings") {
-                    if let url = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(url) {
-                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                    }
-                }
-                Button("Cancel") {
-                    
-                }
-            case nil:
-                EmptyView()
-            }
-        }.fullScreenCover(isPresented: $locationViewModel.isShowingWeatherScreen, content: {
+            handleError(error: error)
+        }.fullScreenCover(isPresented: $locationViewModel.isShowingWeatherScreen) {
+            
             if let location = locationViewModel.locationSelected {
-                WeatherInfoView.init(coordinates: location)
+                WeatherInfoView.init(location: location) {
+                    self.locationViewModel.addUserLocation()
+                    locationViewModel.isShowingWeatherScreen = false
+                }
             }
-        })
-        
-      
-
+        }.onAppear {
+            self.locationViewModel.saveLocation = saveLocation
+        }
+    }
+    
+    private var searchBar: some View {
+           SearchBar(searchText: $locationViewModel.locationSearch, focusState: $searchFocus)
+       }
+    
+    private var locationsList: some View {
+        List {
+            ForEach(locationViewModel.saveLocation.savedLocations) { location in
+                HStack {
+                    Text(location.originalName)
+                }
+                .frame(height: 110)
+                .fontNunito(.semibold, size: 15)
+                .listRowBackground(Color.red)
+            }
+        }
+        .listStyle(PlainListStyle())
+        .background(Color.appBackground.ignoresSafeArea())
+    }
+    
+    @ViewBuilder
+    private func handleError(error: AppError?) -> some View {
+        switch error {
+        case .locationPermission:
+                VStack {
+                    Button("Settings") {
+                        if let url = URL(string: UIApplication.openSettingsURLString),
+                           UIApplication.shared.canOpenURL(url) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    Button("Cancel", action: {})
+                }
+            
+        case nil:
+           EmptyView()
+        }
     }
     
     @ViewBuilder
@@ -81,14 +100,10 @@ struct LocationsView: View {
                 .fontNunito(.light, size: 16)
         })
     }
-    
-  
-    
-
-    
 }
 
 
 #Preview {
     LocationsView()
+        .environmentObject(UserDefaultSavedLocation())
 }

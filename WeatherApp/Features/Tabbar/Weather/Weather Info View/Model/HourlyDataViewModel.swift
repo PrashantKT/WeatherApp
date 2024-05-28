@@ -9,7 +9,7 @@ import Foundation
 
 
 
-struct HourlyDataViewModel:Identifiable {
+struct HourlyDataViewModel:Identifiable,Hashable {
     var id = UUID()
     var time:String
     var temperature:String
