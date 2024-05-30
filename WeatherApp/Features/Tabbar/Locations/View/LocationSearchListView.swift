@@ -13,29 +13,31 @@ struct LocationSearchListView: View {
 
     var body: some View {
         if !locationViewModel.searchList.isEmpty {
-            List {
-                ForEach(0..<30) {_ in
-                    Text("Search Query result")
-                        .fontNunito(.regular, size: 16)
-                        .padding()
-                        .frame(height: 35)
-                    
-
-                }
-                .listRowBackground(Color.clear)
-                .listRowInsets(.none)
-                .listRowSeparator(.hidden, edges: .all)
-
-            }
-
-            .listStyle(.plain)
-            
+            locationSearchList
         } else {
             if !locationViewModel.isMyLocationAdded {
-                
                 askForAddCurrentLocation
             }
         }
+    }
+    
+    var locationSearchList:some View {
+        List {
+            ForEach(0..<30) {_ in
+                Text("Search Query result")
+                    .fontNunito(.regular, size: 16)
+                    .padding()
+                    .frame(height: 35)
+                
+
+            }
+            .listRowBackground(Color.clear)
+            .listRowInsets(.none)
+            .listRowSeparator(.hidden, edges: .all)
+
+        }
+
+        .listStyle(.plain)
     }
     
  

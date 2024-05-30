@@ -21,6 +21,9 @@ class LocationManager:NSObject, ObservableObject {
 
     }
     
+    func fetchLocationPermissionStatus() -> CLAuthorizationStatus {
+        return manager.authorizationStatus
+    }
   
     func askForLocationPermission() {
         if manager.authorizationStatus == .notDetermined {

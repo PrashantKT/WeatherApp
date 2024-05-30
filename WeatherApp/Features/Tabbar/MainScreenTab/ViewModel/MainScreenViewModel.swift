@@ -41,8 +41,6 @@ class MainScreenViewModel:ObservableObject {
     
     @Published var currentTab:Tab = .weather
     
-    //TODO: Save location and show it as default
-    @Published var currentLocation = CLLocationCoordinate2D(latitude: 21.6422, longitude: 69.6093)
     
    
 }

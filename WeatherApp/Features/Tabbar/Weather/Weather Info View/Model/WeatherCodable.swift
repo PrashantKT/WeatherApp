@@ -29,6 +29,12 @@ struct WeatherResponse:Codable {
     }
 }
 
+extension WeatherResponse {
+    var timeZone:TimeZone? {
+        TimeZone(abbreviation: self.timezone_abbreviation ?? "")
+    }
+}
+
 
 // MARK: - Current
 struct Current: Codable {

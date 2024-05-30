@@ -62,19 +62,19 @@ class UserDefaultSavedLocation:ObservableObject, LocationRepo {
     }
     
     private func addFakeLocations() {
-        let fakeLocations = [
-            SavedLocation(lat: 37.7749, lon: -122.4194, originalName: "San Francisco", userSavedName: "SF"),
-            SavedLocation(lat: 34.0522, lon: -118.2437, originalName: "Los Angeles", userSavedName: "LA"),
-            SavedLocation(lat: 40.7128, lon: -74.0060, originalName: "New York", userSavedName: "NYC"),
-            SavedLocation(lat: 51.5074, lon: -0.1278, originalName: "London", userSavedName: "LDN"),
-            SavedLocation(lat: 48.8566, lon: 2.3522, originalName: "Paris", userSavedName: "Paris"),
-            SavedLocation(lat: 35.6895, lon: 139.6917, originalName: "Tokyo", userSavedName: "Tokyo"),
-            SavedLocation(lat: -33.8688, lon: 151.2093, originalName: "Sydney", userSavedName: "Sydney"),
-            SavedLocation(lat: 55.7558, lon: 37.6176, originalName: "Moscow", userSavedName: "Moscow"),
-            SavedLocation(lat: 39.9042, lon: 116.4074, originalName: "Beijing", userSavedName: "Beijing"),
-            SavedLocation(lat: 19.0760, lon: 72.8777, originalName: "Mumbai", userSavedName: "Mumbai")
-        ]
-        self.savedLocations.append(contentsOf: fakeLocations)
+//        let fakeLocations = [
+//            SavedLocation(lat: 37.7749, lon: -122.4194, originalName: "San Francisco", userSavedName: "SF"),
+//            SavedLocation(lat: 34.0522, lon: -118.2437, originalName: "Los Angeles", userSavedName: "LA"),
+//            SavedLocation(lat: 40.7128, lon: -74.0060, originalName: "New York", userSavedName: "NYC"),
+//            SavedLocation(lat: 51.5074, lon: -0.1278, originalName: "London", userSavedName: "LDN"),
+//            SavedLocation(lat: 48.8566, lon: 2.3522, originalName: "Paris", userSavedName: "Paris"),
+//            SavedLocation(lat: 35.6895, lon: 139.6917, originalName: "Tokyo", userSavedName: "Tokyo"),
+//            SavedLocation(lat: -33.8688, lon: 151.2093, originalName: "Sydney", userSavedName: "Sydney"),
+//            SavedLocation(lat: 55.7558, lon: 37.6176, originalName: "Moscow", userSavedName: "Moscow"),
+//            SavedLocation(lat: 39.9042, lon: 116.4074, originalName: "Beijing", userSavedName: "Beijing"),
+//            SavedLocation(lat: 19.0760, lon: 72.8777, originalName: "Mumbai", userSavedName: "Mumbai")
+//        ]
+//        self.savedLocations.append(contentsOf: fakeLocations)
     }
 }
 

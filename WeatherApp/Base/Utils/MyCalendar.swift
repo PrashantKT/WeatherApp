@@ -67,9 +67,9 @@ extension Date {
         MyCalendar.shared.weekSymbol(from: self)
     }
     
-    func isTheSameDay(_ date:Date) -> Bool {
-        let day = MyCalendar.shared.cal.dateComponents(in: Constants.commonTimeZone, from: self).day
-        return MyCalendar.shared.cal.component(.day, from: date) == day
+    func isTheSameDay(_ date:Date,timeZone:TimeZone?) -> Bool {
+        let day = MyCalendar.shared.cal.dateComponents(in: timeZone ?? Constants.commonTimeZone, from: self).day
+        return MyCalendar.shared.cal.dateComponents(in: timeZone ?? Constants.commonTimeZone, from: date).day == day
     }
     
     func isTheSameHour(_ date:Date) -> Bool {

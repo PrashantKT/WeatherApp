@@ -24,11 +24,12 @@ class MyLocationsViewModel: ObservableObject {
     @Published var showError: AppError?
 
     private var cancellables = Set<AnyCancellable>()
-    private var locationManager = LocationManager()
+    private var locationManager : LocationManager
     
     var saveLocation = UserDefaultSavedLocation()
     
-    init() {
+    init(locationManager:LocationManager = LocationManager()) {
+        self.locationManager = locationManager
         setupBindings()
         checkLocationPermissionStatus()
     }
@@ -56,7 +57,7 @@ class MyLocationsViewModel: ObservableObject {
         $locationSearch
             .receive(on: DispatchQueue.main)
             .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
-            .dropFirst()
+//            .dropFirst()
             .sink { [weak self] value in
                 self?.handleSearchInput(value)
             }
@@ -75,21 +76,19 @@ class MyLocationsViewModel: ObservableObject {
     }
     
     private func handleUserLocationUpdate(_ location: CLLocation?) {
-        Task {
+        
+        if isFetchingCurrentLocation {
             if let location = location {
-                if isFetchingCurrentLocation {
+                Task {
                     await showWeatherScreenFor(location: location.coordinate)
                     isFetchingCurrentLocation = false
                 }
-            } else if isFetchingCurrentLocation {
-                isFetchingCurrentLocation = false
-                showError = .locationPermission
-            }
+            } 
         }
     }
     
-    private func checkLocationPermissionStatus() {
-        let status = locationManager.manager.authorizationStatus
+    func checkLocationPermissionStatus() {
+        let status = locationManager.fetchLocationPermissionStatus()
         switch status {
         case .notDetermined:
             isNeedToAskLocationPermission = true

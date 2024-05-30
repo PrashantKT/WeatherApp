@@ -40,7 +40,7 @@ class WeatherInfoViewModel : ObservableObject {
     
     
     private func findDailyDataIndex(of date:Date) -> Int? {
-        response.daily?.time?.firstIndex(where: {$0.isTheSameDay(date)})
+        response.daily?.time?.firstIndex(where: {$0.isTheSameDay(date,timeZone: response.timeZone)})
         
         
         
@@ -48,7 +48,7 @@ class WeatherInfoViewModel : ObservableObject {
     }
     
     private func findHourlyDataIndex(of date:Date) -> Int? {
-        response.hourly?.time?.firstIndex(where: {$0.isTheSameDay(Date()) && $0.isTheSameHour(Date())})
+        response.hourly?.time?.firstIndex(where: {$0.isTheSameDay(Date(),timeZone: response.timeZone) && $0.isTheSameHour(Date())})
     }
 }
 
@@ -97,12 +97,12 @@ extension WeatherInfoViewModel {
     }
     
     func sunriseTime(on date:Date = Date()) -> String {
-        return  response.daily?.sunrise?.first(where: {$0.isTheSameDay(date)})?.formatted(date: .omitted, time: .shortened) ?? "-"
+        return response.daily?.sunrise?.first(where: {$0.isTheSameDay(date,timeZone: response.timeZone)})?.formatted(date: .omitted, time: .shortened) ?? "-"
         
     }
     
     func sunsetTime(on date:Date = Date()) -> String {
-        return  response.daily?.sunset?.first(where: {$0.isTheSameDay(date)})?.formatted(date: .omitted, time: .shortened) ?? "-"
+        return  response.daily?.sunset?.first(where: {$0.isTheSameDay(date,timeZone: response.timeZone)})?.formatted(date: .omitted, time: .shortened) ?? "-"
        
     }
     
@@ -146,8 +146,8 @@ extension WeatherInfoViewModel {
     
     func calculateDayLightPercentage() -> Double {
         if let dataIndex = findDailyDataIndex(of: Date()),
-           let dayEnd = response.daily?.sunset?.first(where: {$0.isTheSameDay(Date())}),
-           let dayStart = response.daily?.sunrise?.first(where: {$0.isTheSameDay(Date())}){
+           let dayEnd = response.daily?.sunset?.first(where: {$0.isTheSameDay(Date(),timeZone: response.timeZone)}),
+           let dayStart = response.daily?.sunrise?.first(where: {$0.isTheSameDay(Date(),timeZone: response.timeZone)}){
             
            
             
@@ -173,7 +173,7 @@ extension WeatherInfoViewModel {
         var result = [HourlyDataViewModel]()
         for index in 0..<time.count {
             let date = time[index]
-            guard date.isTheSameDay(Date()) else {
+            guard date.isTheSameDay(Date(),timeZone: response.timeZone) else {
                 continue
             }
             let dateFormatter = DateFormatter()
@@ -209,7 +209,7 @@ extension WeatherInfoViewModel {
         for index in 0..<time.count {
             let date = time[index]
            
-            let isToday =  date.isTheSameDay(Date())
+            let isToday =  date.isTheSameDay(Date(),timeZone: response.timeZone)
             todayIndex = isToday ? index : todayIndex
             let dateFormatter = DateFormatter()
             dateFormatter.timeZone = Constants.commonTimeZone
